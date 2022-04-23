@@ -475,7 +475,7 @@ def processRedashDataset(dbFilename, jsonUrl, queryId, userKey, cacheValue, para
     lockdownEnabled = False
     if recrow['lockdown_enabled']:
       lockdownVal = int(recrow['lockdown_enabled'])
-      if lockdownVal == 1:
+      if lockdownVal == in [1, 11, 13, 15]:
         lockdownEnabled = True
 
     if crashReason != None:
@@ -500,7 +500,7 @@ def processRedashDataset(dbFilename, jsonUrl, queryId, userKey, cacheValue, para
           # the local json cache we have in memory here. Saves having
           # to delete the file and symbolicate everything again.
           #report['fission'] = fissionEnabled
-          #report['lockdown'] = lockdownEnabled
+          report['lockdown'] = lockdownEnabled
           break
 
     if found:
@@ -551,7 +551,9 @@ def processRedashDataset(dbFilename, jsonUrl, queryId, userKey, cacheValue, para
         'osversion':          [operatingSystemVer],
         'firefoxver':         [firefoxVer],
         'arch':               [arch],
-        'reportList':         list()
+        'reportList':         list(),
+        'win32kEnabled':      0,
+        'win32kDisabled':     0
       }
 
     # Update meta data we track in the report header.
@@ -563,6 +565,11 @@ def processRedashDataset(dbFilename, jsonUrl, queryId, userKey, cacheValue, para
       reports[hash]['firefoxver'].append(firefoxVer)
     if arch not in reports[hash]['arch']:
       reports[hash]['arch'].append(arch)
+
+    if lockdownEnabled:
+      reports[hash]['win32kEnabled'] += 1
+    else:
+      reports[hash]['win32kDisabled'] += 1
 
     # create our report with per crash meta data
     report = {
@@ -654,21 +661,29 @@ def processRedashDataset(dbFilename, jsonUrl, queryId, userKey, cacheValue, para
   needsUpdate = False
   for hash in reports:
     clientCounts[hash] = list()
+    win32kEnabledCount = 0
+    win32kDisabledCount = 0
     for report in reports[hash]['reportList']:
       clientId = report['clientid']
       if clientId not in clientCounts[hash]:
         clientCounts[hash].append(clientId)
+      if report['lockdown']:
+        win32kEnabledCount += 1
+      else:
+        win32kDisabledCount += 1
+    reports[hash]['win32kEnabled']  = win32kEnabledCount
+    reports[hash]['win32kDisabled'] = win32kDisabledCount
     reports[hash]['clientcount'] = len(clientCounts[hash])
 
   return reports, stats, totals['processed']
 
 def checkCrashAge(dateStr):
+  cutoffDate = datetime.fromisoformat('2022-03-15')
   try:
     date = datetime.fromisoformat(dateStr)
   except:
     return False
-  oldestDate = datetime.today() - timedelta(days=7)
-  return (date >= oldestDate)
+  return (date >= cutoffDate)
 
 def getMainVer(version):
   return version.split('.')[0]
@@ -1237,6 +1252,12 @@ def generateTopCrashReport(reports, stats, totalCrashesProcessed, parameters, ip
   for hash in reports:
     if reports[hash]['clientcount'] < reportLowerClientLimit:
       continue
+    totalwin32k = reports[hash]['win32kEnabled'] + reports[hash]['win32kDisabled']
+    win32kEnabledRatio = 0
+    if totalwin32k > 0:
+      win32kEnabledRatio = reports[hash]['win32kEnabled'] / totalwin32k
+    if win32kEnabledRatio < 0.9:
+      continue
     sigCounter[hash] = len(reports[hash]['reportList'])
 
   collection = sigCounter.most_common(MostCommonLength)
@@ -1278,6 +1299,7 @@ def generateTopCrashReport(reports, stats, totalCrashesProcessed, parameters, ip
     # sort reports in this signature based on common crash reasons, so the most common
     # is at the top of the list.
     reportsToReport = generateTopReportsList(reports[hash]['reportList'])
+    win32kEnabledRatio = reports[hash]['win32kEnabled']/(reports[hash]['win32kEnabled'] + reports[hash]['win32kDisabled'])
 
     #fissionIcon = 'noicon'
     #if isFissionRelated(reports[hash]['reportList']):
@@ -1358,12 +1380,18 @@ def generateTopCrashReport(reports, stats, totalCrashesProcessed, parameters, ip
       elif compositor == 'none':
         compositor = ''
 
+      win32kratio = ''
+      if compositor == "enabled":
+          win32kratio = win32kEnabledRatio
+      else:
+          win32kratio = 1 - win32kEnabledRatio
+
       reportHtml += Template(outerStackTemplate).substitute(expandostack=('st'+str(signatureIndex)+'-'+str(idx)),
                                                             rindex=idx,
                                                             type=crashType,
                                                             oomsize=oombytes,
                                                             devvendor=report['devvendor'],
-                                                            devgen=report['devgen'],
+                                                            devgen=win32kratio,
                                                             devchipset=report['devchipset'],
                                                             description=report['devdescription'],
                                                             drvver=report['driverversion'],
