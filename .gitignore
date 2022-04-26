@@ -5,3 +5,6 @@ nightly-reports.json
 nightly-stats.json
 release-reports.json
 release-stats.json
+*.swp
+*.un~
+*.md~
