@@ -14,5 +14,4 @@ Usage:
 
 required -p parameters: process_type, version, channel
 
-example: python crashes.py -n nightly -d nightly -u https://sql.telemetry.mozilla.org -k (userapikey) -q 79354 -p process_type=gpu -p version=89 -p channel=nightly
-
+example: python3 crashes.py -n release -d release -u https://sql.telemetry.mozilla.org -k (userapikey) -q 85274 -p process_type=content -p version=99 -p channel=release -p exp=bug-1763156-pref-win32k-experiment-v3-release-99-100 -p days_ago=1 -p to_days_ago=0
