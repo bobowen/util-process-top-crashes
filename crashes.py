@@ -1259,6 +1259,12 @@ def generateTopCrashReport(reports, stats, totalCrashesProcessed, parameters, ip
       win32kEnabledRatio = reports[hash]['win32kEnabled'] / totalwin32k
     if win32kEnabledRatio < 0.9:
       continue
+    totalwin32k = reports[hash]['win32kEnabled'] + reports[hash]['win32kDisabled']
+    win32kEnabledRatio = 0
+    if totalwin32k > 0:
+      win32kEnabledRatio = reports[hash]['win32kEnabled'] / totalwin32k
+    if win32kEnabledRatio < 0.9:
+      continue
     sigCounter[hash] = len(reports[hash]['reportList'])
 
   collection = sigCounter.most_common(MostCommonLength)
