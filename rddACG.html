@@ -1,0 +1,1406 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <title>Utility Process Top Crashes</title>
+  <link rel="stylesheet" href="crashstyles.css?v=1">
+  <link rel="stylesheet" href="fontawesome/css/fontawesome.css">
+  <link rel="stylesheet" href="fontawesome/css/solid.css">
+  <link rel="stylesheet" href="alertify/css/alertify.css">
+  <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
+  <style>
+  </style>
+  <script type="text/javascript" src="./alertify/alertify.js"></script>
+</head>
+<body onload="onLoad()">
+  <script type="text/javascript">
+
+    function expandElement(target, id, evt) {
+      hideAnnotatonWindow();
+      var isSpan = target instanceof HTMLSpanElement;
+      var isDiv = target instanceof HTMLDivElement;
+      var isHref = target instanceof HTMLAnchorElement;
+      if (isHref && evt)
+        evt.preventDefault();
+      if (!isSpan) {
+        var e = document.getElementById(id);
+        if (e.style.display == 'none' || e.style.display == '') {
+          e.style.display = 'block';
+        } else {
+          e.style.display = 'none';
+        }
+      }
+      return false;
+    }
+
+    function getAnchor() {
+      var currentUrl = document.URL,
+        urlParts = currentUrl.split('#');
+      return (urlParts.length > 1) ? urlParts[1] : null;
+    }
+
+    function onLoad() {
+      var anchor = getAnchor();
+      var e = document.getElementById(anchor);
+      //alert(anchor);
+      if (anchor != null) {
+        expandElement(e, anchor.substring(1));
+      }
+    }
+
+    // for these functions to work, the page must be loaded via https
+    function copyText(text) {
+      hideAnnotatonWindow();
+      if (typeof (navigator.clipboard) == 'undefined') {
+        alertify.notify('You need to load the page vis HTTPS to gain access to the clipboard.', 'failure', 1);
+        return;
+      }
+      navigator.clipboard.writeText(text).then(function () {
+        alertify.notify('Signature text copied successfully', 'success', 1);
+      }, function () {
+        alertify.notify('Failed to copy signature text', 'failure', 1);
+      });
+    }
+
+    lastAnnotation = null;
+    function hideAnnotatonWindow() {
+      if (lastAnnotation != null)
+        lastAnnotation.style.display = 'none';
+      lastAnnotation = null;
+    }
+
+    function displayAnnotations(evt, annDivId) {
+      evt.stopPropagation();
+      var e = document.getElementById(annDivId);
+      if (e == null)
+        return;
+      if (lastAnnotation != null) {
+        tmp = lastAnnotation;
+        hideAnnotatonWindow();
+        if (e == tmp)
+          return;
+      }
+      var pageY = evt.pageY;
+      pageY += 15;
+      e.style.top = pageY + 'px';
+      if (e.style.display == 'none') {
+        e.style.display = 'block';
+        lastAnnotation = e;
+      } else {
+        e.style.display = 'none';
+        lastAnnotation - null;
+      }
+    }
+
+    function setClipboard(elementid) {
+      var el = document.getElementById(elementid);
+      /*
+      // needs 'dom.events.asyncClipboard.clipboardItem' enabled to work
+      var blob = new Blob([el.innerHTML], { type: 'text/html' });
+      var data = [new ClipboardItem({ 'text/html': blob })];
+      navigator.clipboard.write(data).then(
+        function () {
+        },
+        function () {
+        }
+      );
+      */
+      navigator.clipboard.writeText(el.innerText).then(function () {
+        /* clipboard successfully set */
+      }, function () {
+        /* clipboard write failed */
+      });
+    }
+
+  </script>
+
+  <script type="module">
+    import { sparkline } from './sparkline.js';
+
+    function findClosest(target, tagName) {
+      if (target.tagName === tagName) {
+        return target;
+      }
+      while ((target = target.parentNode)) {
+        if (target.tagName === tagName) {
+          break;
+        }
+      }
+      return target;
+    }
+
+    var sloptions = {
+      onmousemove(event, datapoint) {
+        var svg = findClosest(event.target, "svg");
+        // note the double dollar signs below are escapes for python's template substitution.
+        //var date = (new Date(datapoint.date)).toUTCString().replace(/^.*?, (.*?) \d{2}:\d{2}:\d{2}.*?$/, "$1");
+        var date = (new Date(datapoint.date)).toDateString();
+
+        var valueElement = svg.previousElementSibling;
+        //valueElement.hidden = false;
+        valueElement.textContent = '' + datapoint.value.toFixed(0) + ' - ' + date;
+      },
+
+      onmouseout() {
+        var svg = findClosest(event.target, "svg");
+        var valueElement = svg.previousElementSibling;
+        //valueElement.hidden = true;
+      }
+    };
+    ////// sparkline data
+    sparkline(document.querySelector(".svg-0c959b8efc398365147484608f2488e5"), [{name: "All", date: "2022-09-14", value: 3.0},{name: "All", date: "2022-09-16", value: 1.0},{name: "All", date: "2022-09-19", value: 1.0},], sloptions);
+sparkline(document.querySelector(".svg-fdbd72b1a5c0c8050c8b4d4554abef24"), [{name: "All", date: "2022-09-13", value: 2.0},], sloptions);
+sparkline(document.querySelector(".svg-bec3b96684d488c48c30b3dc4a1a019c"), [{name: "All", date: "2022-09-15", value: 1.0},], sloptions);
+sparkline(document.querySelector(".svg-85ec9bbdf134d1531a9015d4eb578bb5"), [{name: "All", date: "2022-09-15", value: 1.0},], sloptions);
+sparkline(document.querySelector(".svg-b60a0530160adc389f2dde4d5a1868f4"), [{name: "All", date: "2022-09-13", value: 1.0},], sloptions);
+sparkline(document.querySelector(".svg-da6045c4ad126c94c4e0a4deda80aad2"), [{name: "All", date: "2022-09-13", value: 1.0},], sloptions);
+
+    ////// sparkline data
+  </script>
+
+  <div id="mainlist">
+    <div class="header">
+      <div class="header-elements">Channel - nightly</div>
+      <div class="header-elements">Process - rdd</div>
+      <div class="header-elements">(7 signatures, 30 crashes)</div>
+    </div>
+    <div class="listheader">
+      <div class="hdr-rank">rank</div>
+      <div class="hdr-percent">%</div>
+      <div class="hdr-signature">signature</div>
+      <div class="hdr-rightpanel">
+        <div class="hdr-search"></div>
+        <div class="hdr-search"></div>
+        <div class="hdr-search"></div>
+        <div class="hdr-search"></div>
+        <div class="hdr-search"></div>
+        <div class="hdr-clientcount">clients</div>
+        <div class="hdr-count">count</div>
+      </div>
+    </div>
+
+    <div class="signature" onclick="expandElement(event.target, '0c959b8efc398365147484608f2488e5', event);" id="a0c959b8efc398365147484608f2488e5">
+      <div class="hdr-rank">1</div>
+      <div class="hdr-percent">17%</div>
+      <div class="hdr-signature"><a href='#a0c959b8efc398365147484608f2488e5'>dav1d_msac_decode_symbol_adapt4_sse2</a></div>
+      <div class="hdr-rightpanel">
+        <div class="hdr-search"><span title="New Signature" class="icon fas fa-bell oomiconclass"></span></div>
+        <div class="hdr-search"><span title="Lockdown Signature" class="icon fas fa-lock oomiconclass"></span></div>
+        <!-- <div class="hdr-search"><span title="Fission Signature" class="noicon fas fa-atom oomiconclass"></span></div>-->
+        <div class="hdr-search"><span title="OOM Signature" class="noicon fas fa-battery-quarter oomiconclass"></span></div>
+        <div class="hdr-search"><span title="View signature annotations" onclick="return displayAnnotations(event, 'annsig1');" class="lticon fas fa-list copyicon"></span></div>
+        <div class="hdr-search"><span title="Copy signature to clipboard" onclick="copyText('dav1d_msac_decode_symbol_adapt4_sse2')" class="icon fas fa-copy copyicon"></span></div>
+        <div class="hdr-search"><a href='https://crash-stats.mozilla.org/search/?minidump_sha256_hash=~8fc4e75dc26b25b5385070e6c4688e950d3d30b0b3be2474f5c7f2fb7677f1d0&minidump_sha256_hash=~4b2db1257588585fe746196c5730ae8eebc9b46d51e41f494ef2c663f64e617e&minidump_sha256_hash=~5f9d511f7538913f2bee826a34d561533d85d674914afc00b90a484b891e265b&minidump_sha256_hash=~c748b19c6a8f187fb45f45b96ef194a0fe00c0258ff30db48bf02cb660da192c&minidump_sha256_hash=~4ae4ec7474497c58d9fedd093eb2cdfea99ef2693eb222130644208a5309fef6' target="_blank" title="Find crash reports"><span class="icon fas fa-fingerprint"></span></a></div>
+        <div class="hdr-search"><a href='https://crash-stats.mozilla.org/search/?signature=~dav1d_msac_decode_symbol_adapt4_sse2&product=Firefox&_facets=signature&process_type=rdd' target="_blank" title="Search for signature"><span class="icon fas fa-signature"></span></a></div>
+        <div class="hdr-clientcount">1</div>
+        <div class="hdr-count">5</div>
+      </div>
+    </div>
+    <div style="display:none;" id="0c959b8efc398365147484608f2488e5">
+      <div class="signature-meta" onclick="expandElement(event.target, '0c959b8efc398365147484608f2488e5');">
+
+        <div class="signature-meta-left">
+          <!-- grid left -->
+          <div class="meta-title-os">Operating System</div>
+          <div class="meta-title-fxver">Firefox Version</div>
+          <div class="meta-title-ver">Version</div>
+          <div class="meta-title-arch">Arch</div>
+          <!-- grid right -->
+          <div class="meta-data-os">Windows</div>
+          <div class="meta-data-fxver">106</div>
+          <div class="meta-data-ver">10.0</div>
+          <div class="meta-data-arch">x86-64</div>
+        </div>
+        <div class="signature-meta-right">
+          <div class="sparkline-container">
+            <!-- sparkline graph, sibling relationship here is important -->
+            <div class="sparkline-value">&nbsp;</div>
+            <svg class="svg-0c959b8efc398365147484608f2488e5 sparkline-svg" width="500" height="53" stroke-width="1"></svg>
+          </div>
+        </div>
+      </div>
+      <div class="report">
+        <div class="report-header">
+          <div class="report-meta-data-index">#</div>
+          <div class="report-meta-data-meta"></div>
+          <div class="report-meta-data-compositor">Compositor</div>
+          <div class="report-meta-data-oom">OOM</div>
+          <div class="report-meta-data-long">Hardware</div>
+          <div class="report-meta-data-short">Gen</div>
+          <div class="report-meta-data-short">Chipset</div>
+          <div class="report-meta-data-short">Version</div>
+          <div class="report-meta-data-short">Date</div>
+          <div class="report-meta-data-type">Crash Type</div>
+          <div class="report-meta-data-reason">Reason</div>
+        </div>
+      </div>
+      <div class="report">
+        <div class="report-meta" onclick="expandElement(event.target, 'st1-1');">
+          <div class="report-meta-data-index">1</div>
+          <div class="report-meta-data-meta"><a target="_blank" title="View meta data on redash" href="https://sql.telemetry.mozilla.org/queries/79462?p_channel=nightly&p_process_type=rdd&p_version=106&p_crash_id=a833856d-e4db-4157-81c0-fe59e2ad7a9f"><span class="icon fas fa-external-link-alt"></span></a> <span class="noicon fas fa-rocket"></span></div>
+          <div class="report-meta-data-compositor">webrender</div>
+          <div class="report-meta-data-oom"></div>
+          <div class="report-meta-data-long">0</div>
+          <div class="report-meta-data-short">0.0</div>
+          <div class="report-meta-data-short">0</div>
+          <div class="report-meta-data-short">0x7ff99b56d8dc</div>
+          <div class="report-meta-data-short">5-17-2022</div>
+          <div class="report-meta-data-type" title="ACCESS_VIOLATION_READ">ACCESS_VIOLATION_READ</div>
+          <div class="report-meta-data-reason" title=""></div>
+        </div>
+        <div class="stack" style="display:none;" id="st1-1">
+          <div class='stackline'>
+            <div class="frame-index">0</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_msac_decode_symbol_adapt4_sse2</div>
+          </div><div class='stackline'>
+            <div class="frame-index">1</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://crash-stats.mozilla.org/sources/highlight/?url=https://gecko-generated-sources.s3.amazonaws.com/4c5a9494b217c682d4e22e3b4fa0b7e1ebab77a8ff305aae27230d9aad74f9d9032469ccd53f1ec4d802e97d18c0271248300cbb59e9fdf8bd23f4cf4242a7ab/media/libdav1d/8bd_recon_tmpl.c&line=436#L-436">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_coefs(Dav1dTaskContext* const, unsigned char* const, unsigned char* const, const RectTxfmSize, const BlockSize, Av1Block const* const, const int, const int, short*, TxfmType* const, unsigned char*)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">2</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://crash-stats.mozilla.org/sources/highlight/?url=https://gecko-generated-sources.s3.amazonaws.com/4c5a9494b217c682d4e22e3b4fa0b7e1ebab77a8ff305aae27230d9aad74f9d9032469ccd53f1ec4d802e97d18c0271248300cbb59e9fdf8bd23f4cf4242a7ab/media/libdav1d/8bd_recon_tmpl.c&line=886#L-886">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_read_coef_blocks_8bpc(Dav1dTaskContext* const, const BlockSize, Av1Block const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">3</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l1391">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_b(Dav1dTaskContext* const, const BlockLevel, const BlockSize, const BlockPartition, const EdgeFlags)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">4</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2374">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_sb(Dav1dTaskContext* const, const BlockLevel, EdgeNode const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">5</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2418">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_sb(Dav1dTaskContext* const, const BlockLevel, EdgeNode const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">6</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2905">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_decode_tile_sbrow(Dav1dTaskContext* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">7</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/thread_task.c#l661">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_worker_task(void*)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">8</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/win32/thread.c#l59">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">thread_entrypoint(void* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">9</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ucrtbase.dll</div>
+            <div class="stack-frame">thread_start&lt;unsigned int (__cdecl*)(void *),1&gt;</div>
+          </div><div class='stackline'>
+            <div class="frame-index">10</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">kernel32.dll</div>
+            <div class="stack-frame">BaseThreadInitThunk</div>
+          </div><div class='stackline'>
+            <div class="frame-index">11</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlUserThreadStart</div>
+          </div>
+          <div class="clickdiv" onclick="setClipboard('st1-1'); return false;">copy stack</div>
+        </div>
+      </div><div class="report">
+        <div class="report-meta" onclick="expandElement(event.target, 'st1-2');">
+          <div class="report-meta-data-index">2</div>
+          <div class="report-meta-data-meta"><a target="_blank" title="View meta data on redash" href="https://sql.telemetry.mozilla.org/queries/79462?p_channel=nightly&p_process_type=rdd&p_version=106&p_crash_id=9f622b3c-3c60-43bf-bc14-0345078616b9"><span class="icon fas fa-external-link-alt"></span></a> <span class="noicon fas fa-rocket"></span></div>
+          <div class="report-meta-data-compositor">webrender</div>
+          <div class="report-meta-data-oom"></div>
+          <div class="report-meta-data-long">0</div>
+          <div class="report-meta-data-short">0.0</div>
+          <div class="report-meta-data-short">0</div>
+          <div class="report-meta-data-short">0x7ff99b56d8dc</div>
+          <div class="report-meta-data-short">5-17-2022</div>
+          <div class="report-meta-data-type" title="ACCESS_VIOLATION_READ">ACCESS_VIOLATION_READ</div>
+          <div class="report-meta-data-reason" title=""></div>
+        </div>
+        <div class="stack" style="display:none;" id="st1-2">
+          <div class='stackline'>
+            <div class="frame-index">0</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_msac_decode_symbol_adapt4_sse2</div>
+          </div><div class='stackline'>
+            <div class="frame-index">1</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://crash-stats.mozilla.org/sources/highlight/?url=https://gecko-generated-sources.s3.amazonaws.com/4c5a9494b217c682d4e22e3b4fa0b7e1ebab77a8ff305aae27230d9aad74f9d9032469ccd53f1ec4d802e97d18c0271248300cbb59e9fdf8bd23f4cf4242a7ab/media/libdav1d/8bd_recon_tmpl.c&line=436#L-436">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_coefs(Dav1dTaskContext* const, unsigned char* const, unsigned char* const, const RectTxfmSize, const BlockSize, Av1Block const* const, const int, const int, short*, TxfmType* const, unsigned char*)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">2</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://crash-stats.mozilla.org/sources/highlight/?url=https://gecko-generated-sources.s3.amazonaws.com/4c5a9494b217c682d4e22e3b4fa0b7e1ebab77a8ff305aae27230d9aad74f9d9032469ccd53f1ec4d802e97d18c0271248300cbb59e9fdf8bd23f4cf4242a7ab/media/libdav1d/8bd_recon_tmpl.c&line=886#L-886">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_read_coef_blocks_8bpc(Dav1dTaskContext* const, const BlockSize, Av1Block const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">3</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l1391">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_b(Dav1dTaskContext* const, const BlockLevel, const BlockSize, const BlockPartition, const EdgeFlags)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">4</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2550">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_sb(Dav1dTaskContext* const, const BlockLevel, EdgeNode const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">5</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2425">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_sb(Dav1dTaskContext* const, const BlockLevel, EdgeNode const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">6</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2905">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_decode_tile_sbrow(Dav1dTaskContext* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">7</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/thread_task.c#l661">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_worker_task(void*)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">8</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/win32/thread.c#l59">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">thread_entrypoint(void* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">9</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ucrtbase.dll</div>
+            <div class="stack-frame">thread_start&lt;unsigned int (__cdecl*)(void *),1&gt;</div>
+          </div><div class='stackline'>
+            <div class="frame-index">10</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">kernel32.dll</div>
+            <div class="stack-frame">BaseThreadInitThunk</div>
+          </div><div class='stackline'>
+            <div class="frame-index">11</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlUserThreadStart</div>
+          </div>
+          <div class="clickdiv" onclick="setClipboard('st1-2'); return false;">copy stack</div>
+        </div>
+      </div><div class="report">
+        <div class="report-meta" onclick="expandElement(event.target, 'st1-3');">
+          <div class="report-meta-data-index">3</div>
+          <div class="report-meta-data-meta"><a target="_blank" title="View meta data on redash" href="https://sql.telemetry.mozilla.org/queries/79462?p_channel=nightly&p_process_type=rdd&p_version=106&p_crash_id=744ad7a6-8d11-41da-baff-dd4b07148e5b"><span class="icon fas fa-external-link-alt"></span></a> <span class="noicon fas fa-rocket"></span></div>
+          <div class="report-meta-data-compositor">webrender</div>
+          <div class="report-meta-data-oom"></div>
+          <div class="report-meta-data-long">0</div>
+          <div class="report-meta-data-short">0.0</div>
+          <div class="report-meta-data-short">0</div>
+          <div class="report-meta-data-short">0x7ff99b56d8dc</div>
+          <div class="report-meta-data-short">5-17-2022</div>
+          <div class="report-meta-data-type" title="ACCESS_VIOLATION_READ">ACCESS_VIOLATION_READ</div>
+          <div class="report-meta-data-reason" title=""></div>
+        </div>
+        <div class="stack" style="display:none;" id="st1-3">
+          <div class='stackline'>
+            <div class="frame-index">0</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_msac_decode_symbol_adapt4_sse2</div>
+          </div><div class='stackline'>
+            <div class="frame-index">1</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://crash-stats.mozilla.org/sources/highlight/?url=https://gecko-generated-sources.s3.amazonaws.com/4c5a9494b217c682d4e22e3b4fa0b7e1ebab77a8ff305aae27230d9aad74f9d9032469ccd53f1ec4d802e97d18c0271248300cbb59e9fdf8bd23f4cf4242a7ab/media/libdav1d/8bd_recon_tmpl.c&line=436#L-436">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_coefs(Dav1dTaskContext* const, unsigned char* const, unsigned char* const, const RectTxfmSize, const BlockSize, Av1Block const* const, const int, const int, short*, TxfmType* const, unsigned char*)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">2</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://crash-stats.mozilla.org/sources/highlight/?url=https://gecko-generated-sources.s3.amazonaws.com/4c5a9494b217c682d4e22e3b4fa0b7e1ebab77a8ff305aae27230d9aad74f9d9032469ccd53f1ec4d802e97d18c0271248300cbb59e9fdf8bd23f4cf4242a7ab/media/libdav1d/8bd_recon_tmpl.c&line=886#L-886">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_read_coef_blocks_8bpc(Dav1dTaskContext* const, const BlockSize, Av1Block const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">3</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l1391">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_b(Dav1dTaskContext* const, const BlockLevel, const BlockSize, const BlockPartition, const EdgeFlags)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">4</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2550">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_sb(Dav1dTaskContext* const, const BlockLevel, EdgeNode const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">5</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2418">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_sb(Dav1dTaskContext* const, const BlockLevel, EdgeNode const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">6</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2418">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_sb(Dav1dTaskContext* const, const BlockLevel, EdgeNode const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">7</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2905">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_decode_tile_sbrow(Dav1dTaskContext* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">8</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/thread_task.c#l661">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_worker_task(void*)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">9</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/win32/thread.c#l59">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">thread_entrypoint(void* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">10</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ucrtbase.dll</div>
+            <div class="stack-frame">thread_start&lt;unsigned int (__cdecl*)(void *),1&gt;</div>
+          </div><div class='stackline'>
+            <div class="frame-index">11</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">kernel32.dll</div>
+            <div class="stack-frame">BaseThreadInitThunk</div>
+          </div><div class='stackline'>
+            <div class="frame-index">12</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlUserThreadStart</div>
+          </div>
+          <div class="clickdiv" onclick="setClipboard('st1-3'); return false;">copy stack</div>
+        </div>
+      </div><div class="report">
+        <div class="report-meta" onclick="expandElement(event.target, 'st1-4');">
+          <div class="report-meta-data-index">4</div>
+          <div class="report-meta-data-meta"><a target="_blank" title="View meta data on redash" href="https://sql.telemetry.mozilla.org/queries/79462?p_channel=nightly&p_process_type=rdd&p_version=106&p_crash_id=0ed8763a-28ab-4193-b4c5-d7972fee37d6"><span class="icon fas fa-external-link-alt"></span></a> <span class="noicon fas fa-rocket"></span></div>
+          <div class="report-meta-data-compositor">webrender</div>
+          <div class="report-meta-data-oom"></div>
+          <div class="report-meta-data-long">0</div>
+          <div class="report-meta-data-short">0.0</div>
+          <div class="report-meta-data-short">0</div>
+          <div class="report-meta-data-short">0x7ff99b56d8dc</div>
+          <div class="report-meta-data-short">5-17-2022</div>
+          <div class="report-meta-data-type" title="ACCESS_VIOLATION_READ">ACCESS_VIOLATION_READ</div>
+          <div class="report-meta-data-reason" title=""></div>
+        </div>
+        <div class="stack" style="display:none;" id="st1-4">
+          <div class='stackline'>
+            <div class="frame-index">0</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_msac_decode_symbol_adapt4_sse2</div>
+          </div><div class='stackline'>
+            <div class="frame-index">1</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://crash-stats.mozilla.org/sources/highlight/?url=https://gecko-generated-sources.s3.amazonaws.com/4c5a9494b217c682d4e22e3b4fa0b7e1ebab77a8ff305aae27230d9aad74f9d9032469ccd53f1ec4d802e97d18c0271248300cbb59e9fdf8bd23f4cf4242a7ab/media/libdav1d/8bd_recon_tmpl.c&line=436#L-436">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_coefs(Dav1dTaskContext* const, unsigned char* const, unsigned char* const, const RectTxfmSize, const BlockSize, Av1Block const* const, const int, const int, short*, TxfmType* const, unsigned char*)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">2</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://crash-stats.mozilla.org/sources/highlight/?url=https://gecko-generated-sources.s3.amazonaws.com/4c5a9494b217c682d4e22e3b4fa0b7e1ebab77a8ff305aae27230d9aad74f9d9032469ccd53f1ec4d802e97d18c0271248300cbb59e9fdf8bd23f4cf4242a7ab/media/libdav1d/8bd_recon_tmpl.c&line=886#L-886">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_read_coef_blocks_8bpc(Dav1dTaskContext* const, const BlockSize, Av1Block const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">3</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l1391">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_b(Dav1dTaskContext* const, const BlockLevel, const BlockSize, const BlockPartition, const EdgeFlags)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">4</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2382">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_sb(Dav1dTaskContext* const, const BlockLevel, EdgeNode const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">5</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2421">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_sb(Dav1dTaskContext* const, const BlockLevel, EdgeNode const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">6</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2905">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_decode_tile_sbrow(Dav1dTaskContext* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">7</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/thread_task.c#l661">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_worker_task(void*)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">8</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/win32/thread.c#l59">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">thread_entrypoint(void* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">9</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ucrtbase.dll</div>
+            <div class="stack-frame">thread_start&lt;unsigned int (__cdecl*)(void *),1&gt;</div>
+          </div><div class='stackline'>
+            <div class="frame-index">10</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">kernel32.dll</div>
+            <div class="stack-frame">BaseThreadInitThunk</div>
+          </div><div class='stackline'>
+            <div class="frame-index">11</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlUserThreadStart</div>
+          </div>
+          <div class="clickdiv" onclick="setClipboard('st1-4'); return false;">copy stack</div>
+        </div>
+      </div><div class="report">
+        <div class="report-meta" onclick="expandElement(event.target, 'st1-5');">
+          <div class="report-meta-data-index">5</div>
+          <div class="report-meta-data-meta"><a target="_blank" title="View meta data on redash" href="https://sql.telemetry.mozilla.org/queries/79462?p_channel=nightly&p_process_type=rdd&p_version=106&p_crash_id=cde0a050-0daf-4e66-897b-63c14ca78fa5"><span class="icon fas fa-external-link-alt"></span></a> <span class="noicon fas fa-rocket"></span></div>
+          <div class="report-meta-data-compositor">webrender</div>
+          <div class="report-meta-data-oom"></div>
+          <div class="report-meta-data-long">0</div>
+          <div class="report-meta-data-short">0.0</div>
+          <div class="report-meta-data-short">0</div>
+          <div class="report-meta-data-short">0x7ff99b56d8dc</div>
+          <div class="report-meta-data-short">5-17-2022</div>
+          <div class="report-meta-data-type" title="ACCESS_VIOLATION_READ">ACCESS_VIOLATION_READ</div>
+          <div class="report-meta-data-reason" title=""></div>
+        </div>
+        <div class="stack" style="display:none;" id="st1-5">
+          <div class='stackline'>
+            <div class="frame-index">0</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_msac_decode_symbol_adapt4_sse2</div>
+          </div><div class='stackline'>
+            <div class="frame-index">1</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://crash-stats.mozilla.org/sources/highlight/?url=https://gecko-generated-sources.s3.amazonaws.com/4c5a9494b217c682d4e22e3b4fa0b7e1ebab77a8ff305aae27230d9aad74f9d9032469ccd53f1ec4d802e97d18c0271248300cbb59e9fdf8bd23f4cf4242a7ab/media/libdav1d/8bd_recon_tmpl.c&line=436#L-436">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_coefs(Dav1dTaskContext* const, unsigned char* const, unsigned char* const, const RectTxfmSize, const BlockSize, Av1Block const* const, const int, const int, short*, TxfmType* const, unsigned char*)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">2</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://crash-stats.mozilla.org/sources/highlight/?url=https://gecko-generated-sources.s3.amazonaws.com/4c5a9494b217c682d4e22e3b4fa0b7e1ebab77a8ff305aae27230d9aad74f9d9032469ccd53f1ec4d802e97d18c0271248300cbb59e9fdf8bd23f4cf4242a7ab/media/libdav1d/8bd_recon_tmpl.c&line=886#L-886">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_read_coef_blocks_8bpc(Dav1dTaskContext* const, const BlockSize, Av1Block const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">3</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l1391">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_b(Dav1dTaskContext* const, const BlockLevel, const BlockSize, const BlockPartition, const EdgeFlags)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">4</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2550">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_sb(Dav1dTaskContext* const, const BlockLevel, EdgeNode const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">5</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2418">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_sb(Dav1dTaskContext* const, const BlockLevel, EdgeNode const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">6</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2418">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">decode_sb(Dav1dTaskContext* const, const BlockLevel, EdgeNode const* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">7</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/decode.c#l2905">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_decode_tile_sbrow(Dav1dTaskContext* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">8</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/thread_task.c#l661">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">dav1d_worker_task(void*)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">9</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/b66bbbcc4467d09a1ef10302ee1a085a675966a8/third_party/dav1d/src/win32/thread.c#l59">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">thread_entrypoint(void* const)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">10</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ucrtbase.dll</div>
+            <div class="stack-frame">thread_start&lt;unsigned int (__cdecl*)(void *),1&gt;</div>
+          </div><div class='stackline'>
+            <div class="frame-index">11</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">kernel32.dll</div>
+            <div class="stack-frame">BaseThreadInitThunk</div>
+          </div><div class='stackline'>
+            <div class="frame-index">12</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlUserThreadStart</div>
+          </div>
+          <div class="clickdiv" onclick="setClipboard('st1-5'); return false;">copy stack</div>
+        </div>
+      </div>
+    </div><div class="signature" onclick="expandElement(event.target, 'fdbd72b1a5c0c8050c8b4d4554abef24', event);" id="afdbd72b1a5c0c8050c8b4d4554abef24">
+      <div class="hdr-rank">2</div>
+      <div class="hdr-percent">7%</div>
+      <div class="hdr-signature"><a href='#afdbd72b1a5c0c8050c8b4d4554abef24'>m7_interpolate_luma_h264_h02v00_width_16_sse2</a></div>
+      <div class="hdr-rightpanel">
+        <div class="hdr-search"><span title="New Signature" class="icon fas fa-bell oomiconclass"></span></div>
+        <div class="hdr-search"><span title="Lockdown Signature" class="icon fas fa-lock oomiconclass"></span></div>
+        <!-- <div class="hdr-search"><span title="Fission Signature" class="noicon fas fa-atom oomiconclass"></span></div>-->
+        <div class="hdr-search"><span title="OOM Signature" class="noicon fas fa-battery-quarter oomiconclass"></span></div>
+        <div class="hdr-search"><span title="View signature annotations" onclick="return displayAnnotations(event, 'annsig2');" class="lticon fas fa-list copyicon"></span></div>
+        <div class="hdr-search"><span title="Copy signature to clipboard" onclick="copyText('m7_interpolate_luma_h264_h02v00_width_16_sse2')" class="icon fas fa-copy copyicon"></span></div>
+        <div class="hdr-search"><a href='https://crash-stats.mozilla.org/search/?minidump_sha256_hash=~3d2bceea7ea6dca18ddce193438a71f92bddbc8dde2ba03114d205d527e74891&minidump_sha256_hash=~5c9c01f22fa26710cc3a15f5cee0f883cb338aa95532f54cb8dc43d4b7df5ab9' target="_blank" title="Find crash reports"><span class="icon fas fa-fingerprint"></span></a></div>
+        <div class="hdr-search"><a href='https://crash-stats.mozilla.org/search/?signature=~m7_interpolate_luma_h264_h02v00_width_16_sse2&product=Firefox&_facets=signature&process_type=rdd' target="_blank" title="Search for signature"><span class="icon fas fa-signature"></span></a></div>
+        <div class="hdr-clientcount">1</div>
+        <div class="hdr-count">2</div>
+      </div>
+    </div>
+    <div style="display:none;" id="fdbd72b1a5c0c8050c8b4d4554abef24">
+      <div class="signature-meta" onclick="expandElement(event.target, 'fdbd72b1a5c0c8050c8b4d4554abef24');">
+
+        <div class="signature-meta-left">
+          <!-- grid left -->
+          <div class="meta-title-os">Operating System</div>
+          <div class="meta-title-fxver">Firefox Version</div>
+          <div class="meta-title-ver">Version</div>
+          <div class="meta-title-arch">Arch</div>
+          <!-- grid right -->
+          <div class="meta-data-os">Windows</div>
+          <div class="meta-data-fxver">106</div>
+          <div class="meta-data-ver">10.0</div>
+          <div class="meta-data-arch">x86-64</div>
+        </div>
+        <div class="signature-meta-right">
+          <div class="sparkline-container">
+            <!-- sparkline graph, sibling relationship here is important -->
+            <div class="sparkline-value">&nbsp;</div>
+            <svg class="svg-fdbd72b1a5c0c8050c8b4d4554abef24 sparkline-svg" width="500" height="53" stroke-width="1"></svg>
+          </div>
+        </div>
+      </div>
+      <div class="report">
+        <div class="report-header">
+          <div class="report-meta-data-index">#</div>
+          <div class="report-meta-data-meta"></div>
+          <div class="report-meta-data-compositor">Compositor</div>
+          <div class="report-meta-data-oom">OOM</div>
+          <div class="report-meta-data-long">Hardware</div>
+          <div class="report-meta-data-short">Gen</div>
+          <div class="report-meta-data-short">Chipset</div>
+          <div class="report-meta-data-short">Version</div>
+          <div class="report-meta-data-short">Date</div>
+          <div class="report-meta-data-type">Crash Type</div>
+          <div class="report-meta-data-reason">Reason</div>
+        </div>
+      </div>
+      <div class="report">
+        <div class="report-meta" onclick="expandElement(event.target, 'st2-1');">
+          <div class="report-meta-data-index">1</div>
+          <div class="report-meta-data-meta"><a target="_blank" title="View meta data on redash" href="https://sql.telemetry.mozilla.org/queries/79462?p_channel=nightly&p_process_type=rdd&p_version=106&p_crash_id=1718774b-42bf-4a6a-8eda-572fbdb9c627"><span class="icon fas fa-external-link-alt"></span></a> <span class="noicon fas fa-rocket"></span></div>
+          <div class="report-meta-data-compositor">webrender</div>
+          <div class="report-meta-data-oom"></div>
+          <div class="report-meta-data-long">0</div>
+          <div class="report-meta-data-short">0.0</div>
+          <div class="report-meta-data-short">0</div>
+          <div class="report-meta-data-short">0x7ff98beba995</div>
+          <div class="report-meta-data-short">8-10-2022</div>
+          <div class="report-meta-data-type" title="ACCESS_VIOLATION_READ">ACCESS_VIOLATION_READ</div>
+          <div class="report-meta-data-reason" title=""></div>
+        </div>
+        <div class="stack" style="display:none;" id="st2-1">
+          <div class='stackline'>
+            <div class="frame-index">0</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">mfperfhelper.dll</div>
+            <div class="stack-frame">m7_interpolate_luma_h264_h02v00_width_16_sse2</div>
+          </div><div class='stackline'>
+            <div class="frame-index">1</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x133267</div>
+          </div><div class='stackline'>
+            <div class="frame-index">2</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x13ac41</div>
+          </div><div class='stackline'>
+            <div class="frame-index">3</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x13994b</div>
+          </div><div class='stackline'>
+            <div class="frame-index">4</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x13d916</div>
+          </div><div class='stackline'>
+            <div class="frame-index">5</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x13d765</div>
+          </div><div class='stackline'>
+            <div class="frame-index">6</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x138eb3</div>
+          </div><div class='stackline'>
+            <div class="frame-index">7</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x35d0f</div>
+          </div><div class='stackline'>
+            <div class="frame-index">8</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x37256</div>
+          </div><div class='stackline'>
+            <div class="frame-index">9</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">kernel32.dll</div>
+            <div class="stack-frame">BaseThreadInitThunk</div>
+          </div><div class='stackline'>
+            <div class="frame-index">10</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlUserThreadStart</div>
+          </div>
+          <div class="clickdiv" onclick="setClipboard('st2-1'); return false;">copy stack</div>
+        </div>
+      </div><div class="report">
+        <div class="report-meta" onclick="expandElement(event.target, 'st2-2');">
+          <div class="report-meta-data-index">2</div>
+          <div class="report-meta-data-meta"><a target="_blank" title="View meta data on redash" href="https://sql.telemetry.mozilla.org/queries/79462?p_channel=nightly&p_process_type=rdd&p_version=106&p_crash_id=563cc12b-7631-419f-b7bb-c4c36836c9a1"><span class="icon fas fa-external-link-alt"></span></a> <span class="noicon fas fa-rocket"></span></div>
+          <div class="report-meta-data-compositor">webrender</div>
+          <div class="report-meta-data-oom"></div>
+          <div class="report-meta-data-long">0</div>
+          <div class="report-meta-data-short">0.0</div>
+          <div class="report-meta-data-short">0</div>
+          <div class="report-meta-data-short">0x7ff98bebaa58</div>
+          <div class="report-meta-data-short">8-10-2022</div>
+          <div class="report-meta-data-type" title="ACCESS_VIOLATION_WRITE">ACCESS_VIOLATION_WRITE</div>
+          <div class="report-meta-data-reason" title=""></div>
+        </div>
+        <div class="stack" style="display:none;" id="st2-2">
+          <div class='stackline'>
+            <div class="frame-index">0</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">mfperfhelper.dll</div>
+            <div class="stack-frame">m7_interpolate_luma_h264_h02v00_width_16_sse2</div>
+          </div><div class='stackline'>
+            <div class="frame-index">1</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x133267</div>
+          </div><div class='stackline'>
+            <div class="frame-index">2</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x13af2f</div>
+          </div><div class='stackline'>
+            <div class="frame-index">3</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x13994b</div>
+          </div><div class='stackline'>
+            <div class="frame-index">4</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x13d916</div>
+          </div><div class='stackline'>
+            <div class="frame-index">5</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x13d765</div>
+          </div><div class='stackline'>
+            <div class="frame-index">6</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x138eb3</div>
+          </div><div class='stackline'>
+            <div class="frame-index">7</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x35d0f</div>
+          </div><div class='stackline'>
+            <div class="frame-index">8</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x37256</div>
+          </div><div class='stackline'>
+            <div class="frame-index">9</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">kernel32.dll</div>
+            <div class="stack-frame">BaseThreadInitThunk</div>
+          </div><div class='stackline'>
+            <div class="frame-index">10</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlUserThreadStart</div>
+          </div>
+          <div class="clickdiv" onclick="setClipboard('st2-2'); return false;">copy stack</div>
+        </div>
+      </div>
+    </div><div class="signature" onclick="expandElement(event.target, 'bec3b96684d488c48c30b3dc4a1a019c', event);" id="abec3b96684d488c48c30b3dc4a1a019c">
+      <div class="hdr-rank">3</div>
+      <div class="hdr-percent">3%</div>
+      <div class="hdr-signature"><a href='#abec3b96684d488c48c30b3dc4a1a019c'>nvwgf2umx_cfg.dll | NDXGI::CDevice::TrimNotificationCallback</a></div>
+      <div class="hdr-rightpanel">
+        <div class="hdr-search"><span title="New Signature" class="icon fas fa-bell oomiconclass"></span></div>
+        <div class="hdr-search"><span title="Lockdown Signature" class="icon fas fa-lock oomiconclass"></span></div>
+        <!-- <div class="hdr-search"><span title="Fission Signature" class="noicon fas fa-atom oomiconclass"></span></div>-->
+        <div class="hdr-search"><span title="OOM Signature" class="noicon fas fa-battery-quarter oomiconclass"></span></div>
+        <div class="hdr-search"><span title="View signature annotations" onclick="return displayAnnotations(event, 'annsig3');" class="lticon fas fa-list copyicon"></span></div>
+        <div class="hdr-search"><span title="Copy signature to clipboard" onclick="copyText('nvwgf2umx_cfg.dll | NDXGI::CDevice::TrimNotificationCallback')" class="icon fas fa-copy copyicon"></span></div>
+        <div class="hdr-search"><a href='https://crash-stats.mozilla.org/search/?minidump_sha256_hash=~01b474b0d08308959078bb9e1a0967d397d8d78477ac2746b63cf2e9cfc08b87' target="_blank" title="Find crash reports"><span class="icon fas fa-fingerprint"></span></a></div>
+        <div class="hdr-search"><a href='https://crash-stats.mozilla.org/search/?signature=~nvwgf2umx_cfg.dll | NDXGI::CDevice::TrimNotificationCallback&product=Firefox&_facets=signature&process_type=rdd' target="_blank" title="Search for signature"><span class="icon fas fa-signature"></span></a></div>
+        <div class="hdr-clientcount">1</div>
+        <div class="hdr-count">1</div>
+      </div>
+    </div>
+    <div style="display:none;" id="bec3b96684d488c48c30b3dc4a1a019c">
+      <div class="signature-meta" onclick="expandElement(event.target, 'bec3b96684d488c48c30b3dc4a1a019c');">
+
+        <div class="signature-meta-left">
+          <!-- grid left -->
+          <div class="meta-title-os">Operating System</div>
+          <div class="meta-title-fxver">Firefox Version</div>
+          <div class="meta-title-ver">Version</div>
+          <div class="meta-title-arch">Arch</div>
+          <!-- grid right -->
+          <div class="meta-data-os">Windows</div>
+          <div class="meta-data-fxver">106</div>
+          <div class="meta-data-ver">10.0</div>
+          <div class="meta-data-arch">x86-64</div>
+        </div>
+        <div class="signature-meta-right">
+          <div class="sparkline-container">
+            <!-- sparkline graph, sibling relationship here is important -->
+            <div class="sparkline-value">&nbsp;</div>
+            <svg class="svg-bec3b96684d488c48c30b3dc4a1a019c sparkline-svg" width="500" height="53" stroke-width="1"></svg>
+          </div>
+        </div>
+      </div>
+      <div class="report">
+        <div class="report-header">
+          <div class="report-meta-data-index">#</div>
+          <div class="report-meta-data-meta"></div>
+          <div class="report-meta-data-compositor">Compositor</div>
+          <div class="report-meta-data-oom">OOM</div>
+          <div class="report-meta-data-long">Hardware</div>
+          <div class="report-meta-data-short">Gen</div>
+          <div class="report-meta-data-short">Chipset</div>
+          <div class="report-meta-data-short">Version</div>
+          <div class="report-meta-data-short">Date</div>
+          <div class="report-meta-data-type">Crash Type</div>
+          <div class="report-meta-data-reason">Reason</div>
+        </div>
+      </div>
+      <div class="report">
+        <div class="report-meta" onclick="expandElement(event.target, 'st3-1');">
+          <div class="report-meta-data-index">1</div>
+          <div class="report-meta-data-meta"><a target="_blank" title="View meta data on redash" href="https://sql.telemetry.mozilla.org/queries/79462?p_channel=nightly&p_process_type=rdd&p_version=106&p_crash_id=70f34f4c-3ee0-4c5f-a167-3db431ee963f"><span class="icon fas fa-external-link-alt"></span></a> <span class="noicon fas fa-rocket"></span></div>
+          <div class="report-meta-data-compositor">webrender</div>
+          <div class="report-meta-data-oom"></div>
+          <div class="report-meta-data-long">0</div>
+          <div class="report-meta-data-short">0.0</div>
+          <div class="report-meta-data-short">0</div>
+          <div class="report-meta-data-short">0x7ff8358e70b7</div>
+          <div class="report-meta-data-short">7-21-2022</div>
+          <div class="report-meta-data-type" title="ACCESS_VIOLATION_READ">ACCESS_VIOLATION_READ</div>
+          <div class="report-meta-data-reason" title=""></div>
+        </div>
+        <div class="stack" style="display:none;" id="st3-1">
+          <div class='stackline'>
+            <div class="frame-index">0</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">nvwgf2umx_cfg.dll</div>
+            <div class="stack-frame">0x1070b7</div>
+          </div><div class='stackline'>
+            <div class="frame-index">1</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">nvwgf2umx_cfg.dll</div>
+            <div class="stack-frame">0xcae30</div>
+          </div><div class='stackline'>
+            <div class="frame-index">2</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">d3d11.dll</div>
+            <div class="stack-frame">static void NDXGI::CDevice::TrimNotificationCallback(struct _D3DKMT_TRIMNOTIFICATION *)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">3</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">dxcore.dll</div>
+            <div class="stack-frame">DxTrimWnfCallback</div>
+          </div><div class='stackline'>
+            <div class="frame-index">4</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlpWnfWalkUserSubscriptionList</div>
+          </div><div class='stackline'>
+            <div class="frame-index">5</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlpWnfProcessCurrentDescriptor</div>
+          </div><div class='stackline'>
+            <div class="frame-index">6</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlpWnfNotificationThread</div>
+          </div><div class='stackline'>
+            <div class="frame-index">7</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">TppExecuteWaitCallback</div>
+          </div><div class='stackline'>
+            <div class="frame-index">8</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">TppWorkerThread</div>
+          </div><div class='stackline'>
+            <div class="frame-index">9</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">kernel32.dll</div>
+            <div class="stack-frame">BaseThreadInitThunk</div>
+          </div><div class='stackline'>
+            <div class="frame-index">10</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlUserThreadStart</div>
+          </div>
+          <div class="clickdiv" onclick="setClipboard('st3-1'); return false;">copy stack</div>
+        </div>
+      </div>
+    </div><div class="signature" onclick="expandElement(event.target, '85ec9bbdf134d1531a9015d4eb578bb5', event);" id="a85ec9bbdf134d1531a9015d4eb578bb5">
+      <div class="hdr-rank">4</div>
+      <div class="hdr-percent">3%</div>
+      <div class="hdr-signature"><a href='#a85ec9bbdf134d1531a9015d4eb578bb5'>RtlSetLastWin32Error | BaseSetLastNTError</a></div>
+      <div class="hdr-rightpanel">
+        <div class="hdr-search"><span title="New Signature" class="icon fas fa-bell oomiconclass"></span></div>
+        <div class="hdr-search"><span title="Lockdown Signature" class="icon fas fa-lock oomiconclass"></span></div>
+        <!-- <div class="hdr-search"><span title="Fission Signature" class="noicon fas fa-atom oomiconclass"></span></div>-->
+        <div class="hdr-search"><span title="OOM Signature" class="noicon fas fa-battery-quarter oomiconclass"></span></div>
+        <div class="hdr-search"><span title="View signature annotations" onclick="return displayAnnotations(event, 'annsig4');" class="lticon fas fa-list copyicon"></span></div>
+        <div class="hdr-search"><span title="Copy signature to clipboard" onclick="copyText('RtlSetLastWin32Error | BaseSetLastNTError')" class="icon fas fa-copy copyicon"></span></div>
+        <div class="hdr-search"><a href='https://crash-stats.mozilla.org/search/?minidump_sha256_hash=~83c74ca8cf70fbc6379b1b94bb9314718673862e7d1e23a11acb24bbefc53ba4' target="_blank" title="Find crash reports"><span class="icon fas fa-fingerprint"></span></a></div>
+        <div class="hdr-search"><a href='https://crash-stats.mozilla.org/search/?signature=~RtlSetLastWin32Error | BaseSetLastNTError&product=Firefox&_facets=signature&process_type=rdd' target="_blank" title="Search for signature"><span class="icon fas fa-signature"></span></a></div>
+        <div class="hdr-clientcount">1</div>
+        <div class="hdr-count">1</div>
+      </div>
+    </div>
+    <div style="display:none;" id="85ec9bbdf134d1531a9015d4eb578bb5">
+      <div class="signature-meta" onclick="expandElement(event.target, '85ec9bbdf134d1531a9015d4eb578bb5');">
+
+        <div class="signature-meta-left">
+          <!-- grid left -->
+          <div class="meta-title-os">Operating System</div>
+          <div class="meta-title-fxver">Firefox Version</div>
+          <div class="meta-title-ver">Version</div>
+          <div class="meta-title-arch">Arch</div>
+          <!-- grid right -->
+          <div class="meta-data-os">Windows</div>
+          <div class="meta-data-fxver">106</div>
+          <div class="meta-data-ver">10.0</div>
+          <div class="meta-data-arch">x86-64</div>
+        </div>
+        <div class="signature-meta-right">
+          <div class="sparkline-container">
+            <!-- sparkline graph, sibling relationship here is important -->
+            <div class="sparkline-value">&nbsp;</div>
+            <svg class="svg-85ec9bbdf134d1531a9015d4eb578bb5 sparkline-svg" width="500" height="53" stroke-width="1"></svg>
+          </div>
+        </div>
+      </div>
+      <div class="report">
+        <div class="report-header">
+          <div class="report-meta-data-index">#</div>
+          <div class="report-meta-data-meta"></div>
+          <div class="report-meta-data-compositor">Compositor</div>
+          <div class="report-meta-data-oom">OOM</div>
+          <div class="report-meta-data-long">Hardware</div>
+          <div class="report-meta-data-short">Gen</div>
+          <div class="report-meta-data-short">Chipset</div>
+          <div class="report-meta-data-short">Version</div>
+          <div class="report-meta-data-short">Date</div>
+          <div class="report-meta-data-type">Crash Type</div>
+          <div class="report-meta-data-reason">Reason</div>
+        </div>
+      </div>
+      <div class="report">
+        <div class="report-meta" onclick="expandElement(event.target, 'st4-1');">
+          <div class="report-meta-data-index">1</div>
+          <div class="report-meta-data-meta"><a target="_blank" title="View meta data on redash" href="https://sql.telemetry.mozilla.org/queries/79462?p_channel=nightly&p_process_type=rdd&p_version=106&p_crash_id=e4bf2472-1350-4a9c-8f7e-f3c2d3332da8"><span class="icon fas fa-external-link-alt"></span></a> <span class="noicon fas fa-rocket"></span></div>
+          <div class="report-meta-data-compositor">webrender</div>
+          <div class="report-meta-data-oom"></div>
+          <div class="report-meta-data-long">0</div>
+          <div class="report-meta-data-short">0.0</div>
+          <div class="report-meta-data-short">0</div>
+          <div class="report-meta-data-short">0x7ffdfc5007ab</div>
+          <div class="report-meta-data-short">8-19-2022</div>
+          <div class="report-meta-data-type" title="STACK_OVERFLOW">STACK_OVERFLOW</div>
+          <div class="report-meta-data-reason" title=""></div>
+        </div>
+        <div class="stack" style="display:none;" id="st4-1">
+          <div class='stackline'>
+            <div class="frame-index">0</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlSetLastWin32Error</div>
+          </div><div class='stackline'>
+            <div class="frame-index">1</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">kernelbase.dll</div>
+            <div class="stack-frame">BaseSetLastNTError</div>
+          </div><div class='stackline'>
+            <div class="frame-index">2</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">kernelbase.dll</div>
+            <div class="stack-frame">InitOnceComplete</div>
+          </div><div class='stackline'>
+            <div class="frame-index">3</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/f3347d35ab5ee7472b4ddb0c43a47d28190fd1d7/media/ffvpx/libavcodec/allcodecs.c#l935">src</a></div>
+            <div class="module-name">mozavcodec.dll</div>
+            <div class="stack-frame">avcodec_find_decoder(AVCodecID)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">4</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/f3347d35ab5ee7472b4ddb0c43a47d28190fd1d7/dom/media/platforms/ffmpeg/FFmpegDataDecoder.cpp#l77">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">mozilla::FFmpegDataDecoder&lt;46465650&gt;::InitDecoder()</div>
+          </div><div class='stackline'>
+            <div class="frame-index">5</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/f3347d35ab5ee7472b4ddb0c43a47d28190fd1d7/dom/media/platforms/ffmpeg/FFmpegVideoDecoder.cpp#l433">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">mozilla::FFmpegVideoDecoder&lt;46465650&gt;::Init()</div>
+          </div><div class='stackline'>
+            <div class="frame-index">6</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/f3347d35ab5ee7472b4ddb0c43a47d28190fd1d7/xpcom/threads/MozPromise.h#l1645">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">mozilla::detail::ProxyFunctionRunnable&lt;`lambda at /builds/worker/checkouts/gecko/dom/media/platforms/wrappers/MediaDataDecoderProxy.cpp:17:46&#x27;,mozilla::MozPromise&lt;mozilla::TrackInfo::TrackType,mozilla::MediaResult,1&gt; &gt;::Run()</div>
+          </div><div class='stackline'>
+            <div class="frame-index">7</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/f3347d35ab5ee7472b4ddb0c43a47d28190fd1d7/xpcom/threads/TaskQueue.cpp#l259">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">mozilla::TaskQueue::Runner::Run()</div>
+          </div><div class='stackline'>
+            <div class="frame-index">8</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/f3347d35ab5ee7472b4ddb0c43a47d28190fd1d7/xpcom/threads/nsThreadPool.cpp#l310">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">nsThreadPool::Run()</div>
+          </div><div class='stackline'>
+            <div class="frame-index">9</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/f3347d35ab5ee7472b4ddb0c43a47d28190fd1d7/xpcom/threads/nsThread.cpp#l1199">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">nsThread::ProcessNextEvent(bool, bool*)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">10</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/f3347d35ab5ee7472b4ddb0c43a47d28190fd1d7/ipc/glue/MessagePump.cpp#l300">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">mozilla::ipc::MessagePumpForNonMainThreads::Run(base::MessagePump::Delegate*)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">11</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/f3347d35ab5ee7472b4ddb0c43a47d28190fd1d7/ipc/chromium/src/base/message_loop.cc#l374">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">MessageLoop::RunHandler()</div>
+          </div><div class='stackline'>
+            <div class="frame-index">12</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">kernel32.dll</div>
+            <div class="stack-frame">RegisterWaitForSingleObject</div>
+          </div><div class='stackline'>
+            <div class="frame-index">13</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">kernel32.dll</div>
+            <div class="stack-frame">RegisterWaitForSingleObject</div>
+          </div><div class='stackline'>
+            <div class="frame-index">14</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/f3347d35ab5ee7472b4ddb0c43a47d28190fd1d7/ipc/chromium/src/base/message_loop.cc#l356">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">MessageLoop::Run()</div>
+          </div><div class='stackline'>
+            <div class="frame-index">15</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/f3347d35ab5ee7472b4ddb0c43a47d28190fd1d7/xpcom/threads/nsThread.cpp#l384">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">nsThread::ThreadFunc(void*)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">16</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/f3347d35ab5ee7472b4ddb0c43a47d28190fd1d7/nsprpub/pr/src/threads/combined/pruthr.c#l399">src</a></div>
+            <div class="module-name">nss3.dll</div>
+            <div class="stack-frame">_PR_NativeRunThread(void*)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">17</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/f3347d35ab5ee7472b4ddb0c43a47d28190fd1d7/nsprpub/pr/src/md/windows/w95thred.c#l139">src</a></div>
+            <div class="module-name">nss3.dll</div>
+            <div class="stack-frame">pr_root(void*)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">18</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ucrtbase.dll</div>
+            <div class="stack-frame">thread_start&lt;unsigned int (__cdecl*)(void *),1&gt;</div>
+          </div><div class='stackline'>
+            <div class="frame-index">19</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">kernel32.dll</div>
+            <div class="stack-frame">BaseThreadInitThunk</div>
+          </div><div class='stackline'>
+            <div class="frame-index">20</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlUserThreadStart</div>
+          </div>
+          <div class="clickdiv" onclick="setClipboard('st4-1'); return false;">copy stack</div>
+        </div>
+      </div>
+    </div><div class="signature" onclick="expandElement(event.target, 'b60a0530160adc389f2dde4d5a1868f4', event);" id="ab60a0530160adc389f2dde4d5a1868f4">
+      <div class="hdr-rank">5</div>
+      <div class="hdr-percent">3%</div>
+      <div class="hdr-signature"><a href='#ab60a0530160adc389f2dde4d5a1868f4'>ff_vp9_decode_block</a></div>
+      <div class="hdr-rightpanel">
+        <div class="hdr-search"><span title="New Signature" class="icon fas fa-bell oomiconclass"></span></div>
+        <div class="hdr-search"><span title="Lockdown Signature" class="icon fas fa-lock oomiconclass"></span></div>
+        <!-- <div class="hdr-search"><span title="Fission Signature" class="noicon fas fa-atom oomiconclass"></span></div>-->
+        <div class="hdr-search"><span title="OOM Signature" class="noicon fas fa-battery-quarter oomiconclass"></span></div>
+        <div class="hdr-search"><span title="View signature annotations" onclick="return displayAnnotations(event, 'annsig5');" class="lticon fas fa-list copyicon"></span></div>
+        <div class="hdr-search"><span title="Copy signature to clipboard" onclick="copyText('ff_vp9_decode_block')" class="icon fas fa-copy copyicon"></span></div>
+        <div class="hdr-search"><a href='https://crash-stats.mozilla.org/search/?minidump_sha256_hash=~9e024b1a35bf533b6965dea1d505754c5462435dbca303b37e90a8080b7ddb31' target="_blank" title="Find crash reports"><span class="icon fas fa-fingerprint"></span></a></div>
+        <div class="hdr-search"><a href='https://crash-stats.mozilla.org/search/?signature=~ff_vp9_decode_block&product=Firefox&_facets=signature&process_type=rdd' target="_blank" title="Search for signature"><span class="icon fas fa-signature"></span></a></div>
+        <div class="hdr-clientcount">1</div>
+        <div class="hdr-count">1</div>
+      </div>
+    </div>
+    <div style="display:none;" id="b60a0530160adc389f2dde4d5a1868f4">
+      <div class="signature-meta" onclick="expandElement(event.target, 'b60a0530160adc389f2dde4d5a1868f4');">
+
+        <div class="signature-meta-left">
+          <!-- grid left -->
+          <div class="meta-title-os">Operating System</div>
+          <div class="meta-title-fxver">Firefox Version</div>
+          <div class="meta-title-ver">Version</div>
+          <div class="meta-title-arch">Arch</div>
+          <!-- grid right -->
+          <div class="meta-data-os">Windows</div>
+          <div class="meta-data-fxver">106</div>
+          <div class="meta-data-ver">10.0</div>
+          <div class="meta-data-arch">x86-64</div>
+        </div>
+        <div class="signature-meta-right">
+          <div class="sparkline-container">
+            <!-- sparkline graph, sibling relationship here is important -->
+            <div class="sparkline-value">&nbsp;</div>
+            <svg class="svg-b60a0530160adc389f2dde4d5a1868f4 sparkline-svg" width="500" height="53" stroke-width="1"></svg>
+          </div>
+        </div>
+      </div>
+      <div class="report">
+        <div class="report-header">
+          <div class="report-meta-data-index">#</div>
+          <div class="report-meta-data-meta"></div>
+          <div class="report-meta-data-compositor">Compositor</div>
+          <div class="report-meta-data-oom">OOM</div>
+          <div class="report-meta-data-long">Hardware</div>
+          <div class="report-meta-data-short">Gen</div>
+          <div class="report-meta-data-short">Chipset</div>
+          <div class="report-meta-data-short">Version</div>
+          <div class="report-meta-data-short">Date</div>
+          <div class="report-meta-data-type">Crash Type</div>
+          <div class="report-meta-data-reason">Reason</div>
+        </div>
+      </div>
+      <div class="report">
+        <div class="report-meta" onclick="expandElement(event.target, 'st5-1');">
+          <div class="report-meta-data-index">1</div>
+          <div class="report-meta-data-meta"><a target="_blank" title="View meta data on redash" href="https://sql.telemetry.mozilla.org/queries/79462?p_channel=nightly&p_process_type=rdd&p_version=106&p_crash_id=e0d35e7e-625a-4b1b-b82b-3604e9712623"><span class="icon fas fa-external-link-alt"></span></a> <span class="noicon fas fa-rocket"></span></div>
+          <div class="report-meta-data-compositor">webrender</div>
+          <div class="report-meta-data-oom"></div>
+          <div class="report-meta-data-long">0</div>
+          <div class="report-meta-data-short">0.0</div>
+          <div class="report-meta-data-short">0</div>
+          <div class="report-meta-data-short">0x7ff9c377c56f</div>
+          <div class="report-meta-data-short">8-10-2022</div>
+          <div class="report-meta-data-type" title="STATUS_STACK_BUFFER_OVERRUN / FAST_FAIL_GUARD_ICALL_CHECK_FAILURE">STATUS_STACK_BUFFER_OVERRUN / FAST_FAIL_GUARD_ICALL_CHECK_FAILURE</div>
+          <div class="report-meta-data-reason" title=""></div>
+        </div>
+        <div class="stack" style="display:none;" id="st5-1">
+          <div class='stackline'>
+            <div class="frame-index">0</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">LdrpICallHandler</div>
+          </div><div class='stackline'>
+            <div class="frame-index">1</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlpExecuteHandlerForException</div>
+          </div><div class='stackline'>
+            <div class="frame-index">2</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlDispatchException</div>
+          </div><div class='stackline'>
+            <div class="frame-index">3</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/c7037dbd2de37f147a445b6dae361671ef71896a/media/ffvpx/libavcodec/vp9block.c#l1421">src</a></div>
+            <div class="module-name">mozavcodec.dll</div>
+            <div class="stack-frame">ff_vp9_decode_block(VP9TileData*, int, int, VP9Filter*, long long, long long, BlockLevel, BlockPartition)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">4</div>
+            <div class="src-link"><a target="_blank" style="display:inline-block;" href="https://hg.mozilla.org/mozilla-central/file/c7037dbd2de37f147a445b6dae361671ef71896a/toolkit/crashreporter/breakpad-client/windows/handler/exception_handler.cc#l756">src</a></div>
+            <div class="module-name">xul.dll</div>
+            <div class="stack-frame">google_breakpad::ExceptionHandler::HandleHeapCorruption(_EXCEPTION_POINTERS*)</div>
+          </div><div class='stackline'>
+            <div class="frame-index">5</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlpCallVectoredHandlers</div>
+          </div><div class='stackline'>
+            <div class="frame-index">6</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlDispatchException</div>
+          </div><div class='stackline'>
+            <div class="frame-index">7</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">&lt;unknown in ntdll.dll&gt;</div>
+          </div><div class='stackline'>
+            <div class="frame-index">8</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">LdrpDispatchUserCallTarget</div>
+          </div><div class='stackline'>
+            <div class="frame-index">9</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">&lt;unknown in ntdll.dll&gt;</div>
+          </div><div class='stackline'>
+            <div class="frame-index">10</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">LdrpHandleInvalidUserCallTarget</div>
+          </div><div class='stackline'>
+            <div class="frame-index">11</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">&lt;unknown in ntdll.dll&gt;</div>
+          </div><div class='stackline'>
+            <div class="frame-index">12</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">LdrpValidateUserCallTargetES</div>
+          </div><div class='stackline'>
+            <div class="frame-index">13</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">LdrpDispatchUserCallTarget</div>
+          </div><div class='stackline'>
+            <div class="frame-index">14</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">&lt;unknown in ntdll.dll&gt;</div>
+          </div><div class='stackline'>
+            <div class="frame-index">15</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">KiUserExceptionDispatch</div>
+          </div><div class='stackline'>
+            <div class="frame-index">16</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">LdrpDispatchUserCallTarget</div>
+          </div>
+          <div class="clickdiv" onclick="setClipboard('st5-1'); return false;">copy stack</div>
+        </div>
+      </div>
+    </div><div class="signature" onclick="expandElement(event.target, 'da6045c4ad126c94c4e0a4deda80aad2', event);" id="ada6045c4ad126c94c4e0a4deda80aad2">
+      <div class="hdr-rank">6</div>
+      <div class="hdr-percent">3%</div>
+      <div class="hdr-signature"><a href='#ada6045c4ad126c94c4e0a4deda80aad2'>msmpeg2vdec.dll</a></div>
+      <div class="hdr-rightpanel">
+        <div class="hdr-search"><span title="New Signature" class="icon fas fa-bell oomiconclass"></span></div>
+        <div class="hdr-search"><span title="Lockdown Signature" class="icon fas fa-lock oomiconclass"></span></div>
+        <!-- <div class="hdr-search"><span title="Fission Signature" class="noicon fas fa-atom oomiconclass"></span></div>-->
+        <div class="hdr-search"><span title="OOM Signature" class="noicon fas fa-battery-quarter oomiconclass"></span></div>
+        <div class="hdr-search"><span title="View signature annotations" onclick="return displayAnnotations(event, 'annsig6');" class="lticon fas fa-list copyicon"></span></div>
+        <div class="hdr-search"><span title="Copy signature to clipboard" onclick="copyText('msmpeg2vdec.dll')" class="icon fas fa-copy copyicon"></span></div>
+        <div class="hdr-search"><a href='https://crash-stats.mozilla.org/search/?minidump_sha256_hash=~1e72c9ce4be5ec2ca799582762a0a63129b2501411c16bf198ea513435876bc9' target="_blank" title="Find crash reports"><span class="icon fas fa-fingerprint"></span></a></div>
+        <div class="hdr-search"><a href='https://crash-stats.mozilla.org/search/?signature=~msmpeg2vdec.dll&product=Firefox&_facets=signature&process_type=rdd' target="_blank" title="Search for signature"><span class="icon fas fa-signature"></span></a></div>
+        <div class="hdr-clientcount">1</div>
+        <div class="hdr-count">1</div>
+      </div>
+    </div>
+    <div style="display:none;" id="da6045c4ad126c94c4e0a4deda80aad2">
+      <div class="signature-meta" onclick="expandElement(event.target, 'da6045c4ad126c94c4e0a4deda80aad2');">
+
+        <div class="signature-meta-left">
+          <!-- grid left -->
+          <div class="meta-title-os">Operating System</div>
+          <div class="meta-title-fxver">Firefox Version</div>
+          <div class="meta-title-ver">Version</div>
+          <div class="meta-title-arch">Arch</div>
+          <!-- grid right -->
+          <div class="meta-data-os">Windows</div>
+          <div class="meta-data-fxver">106</div>
+          <div class="meta-data-ver">10.0</div>
+          <div class="meta-data-arch">x86-64</div>
+        </div>
+        <div class="signature-meta-right">
+          <div class="sparkline-container">
+            <!-- sparkline graph, sibling relationship here is important -->
+            <div class="sparkline-value">&nbsp;</div>
+            <svg class="svg-da6045c4ad126c94c4e0a4deda80aad2 sparkline-svg" width="500" height="53" stroke-width="1"></svg>
+          </div>
+        </div>
+      </div>
+      <div class="report">
+        <div class="report-header">
+          <div class="report-meta-data-index">#</div>
+          <div class="report-meta-data-meta"></div>
+          <div class="report-meta-data-compositor">Compositor</div>
+          <div class="report-meta-data-oom">OOM</div>
+          <div class="report-meta-data-long">Hardware</div>
+          <div class="report-meta-data-short">Gen</div>
+          <div class="report-meta-data-short">Chipset</div>
+          <div class="report-meta-data-short">Version</div>
+          <div class="report-meta-data-short">Date</div>
+          <div class="report-meta-data-type">Crash Type</div>
+          <div class="report-meta-data-reason">Reason</div>
+        </div>
+      </div>
+      <div class="report">
+        <div class="report-meta" onclick="expandElement(event.target, 'st6-1');">
+          <div class="report-meta-data-index">1</div>
+          <div class="report-meta-data-meta"><a target="_blank" title="View meta data on redash" href="https://sql.telemetry.mozilla.org/queries/79462?p_channel=nightly&p_process_type=rdd&p_version=106&p_crash_id=08cd6a50-a36b-4283-9e3b-6497dcafee08"><span class="icon fas fa-external-link-alt"></span></a> <span class="noicon fas fa-rocket"></span></div>
+          <div class="report-meta-data-compositor">webrender</div>
+          <div class="report-meta-data-oom"></div>
+          <div class="report-meta-data-long">0</div>
+          <div class="report-meta-data-short">0.0</div>
+          <div class="report-meta-data-short">0</div>
+          <div class="report-meta-data-short">0x7ff9c377c56f</div>
+          <div class="report-meta-data-short">8-10-2022</div>
+          <div class="report-meta-data-type" title="STATUS_STACK_BUFFER_OVERRUN / FAST_FAIL_GUARD_ICALL_CHECK_FAILURE">STATUS_STACK_BUFFER_OVERRUN / FAST_FAIL_GUARD_ICALL_CHECK_FAILURE</div>
+          <div class="report-meta-data-reason" title=""></div>
+        </div>
+        <div class="stack" style="display:none;" id="st6-1">
+          <div class='stackline'>
+            <div class="frame-index">0</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">LdrpICallHandler</div>
+          </div><div class='stackline'>
+            <div class="frame-index">1</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlpExecuteHandlerForException</div>
+          </div><div class='stackline'>
+            <div class="frame-index">2</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">ntdll.dll</div>
+            <div class="stack-frame">RtlDispatchException</div>
+          </div><div class='stackline'>
+            <div class="frame-index">3</div>
+            <div class="src-link"><a target="_blank" style="display:none;" href="">src</a></div>
+            <div class="module-name">msmpeg2vdec.dll</div>
+            <div class="stack-frame">0x13b18b</div>
+          </div>
+          <div class="clickdiv" onclick="setClipboard('st6-1'); return false;">copy stack</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="processeddate">09/22/2022, 13:45:09</div>Source code for this dashboard is <a href="https://github.com/jmathies/util-process-top-crashes">available on Github</a>.
+</body>
+</html>
