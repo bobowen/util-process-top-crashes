@@ -185,7 +185,7 @@ def getRedashQueryResult(redash_url, query_id, api_key, cacheValue, params):
 
   # max_age is a redash value that controls cached results. If there is a cached query result
   # newer than this time (in seconds) it will be returned instead of a fresh query.
-  # 86400 = 24 hours, 43200 = 12 hours, 0 = refresh query 
+  # 86400 = 24 hours, 43200 = 12 hours, 0 = refresh query
   #
   # Note sometimes the redash caching feature gets 'stuck' on an old cache. Side effect is
   # that all reports will eventually be older than 7 days and as such will be filtered out
@@ -194,13 +194,14 @@ def getRedashQueryResult(redash_url, query_id, api_key, cacheValue, params):
   payload = dict(max_age=cacheValue, parameters=params)
 
   url = "%s/api/queries/%s/results" % (redash_url, query_id)
+  print('\n' + url+ '\n')
   response = s.post(url, data=json.dumps(payload))
 
   if response.status_code != 200:
     print("\nquery error '%s'" % response)
     pp.pprint(payload)
     raise Exception('Redash query failed.')
-  
+
   #{ 'job': { 'error': '',
   #           'id': '21429857-5fd0-443d-ba4b-fb9cc6d49add',
   #           'query_result_id': None,
@@ -411,7 +412,7 @@ def processRedashDataset(dbFilename, jsonUrl, queryId, userKey, cacheValue, para
     'alreadyProcessed': 0,
     'outdated': 0
   }
-  
+
   # load up our database of processed crash ids
   # returns an empty dict() if no data is loaded.
   reports, stats = loadReports(dbFilename)
@@ -540,7 +541,7 @@ def processRedashDataset(dbFilename, jsonUrl, queryId, userKey, cacheValue, para
     # build up a pretty stack
     stack = processStack(frames)
 
-    # generate a tracking hash 
+    # generate a tracking hash
     hash = generateSignatureHash(signature, operatingSystem, operatingSystemVer, arch, firefoxVer)
 
     if hash not in reports.keys():
